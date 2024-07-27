@@ -19,19 +19,19 @@ jobs:
         project_id: ${{ secrets.GCLOUD_PROJECT_ID }}
         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
-    - name: Authenticate Docker
-      run: gcloud auth configure-docker
+    - name: Authenticate Docker for Artifact Registry
+      run: |
+        gcloud auth configure-docker australia-southeast1-docker.pkg.dev
 
     - name: Build Docker image
       run: |
-        docker build -t gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/node-hello-world:latest .
-        docker push gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/node-hello-world:latest
+        docker build -t australia-southeast1-docker.pkg.dev/${{ secrets.GCLOUD_PROJECT_ID }}/cloud_run_test/node-hello-world:latest .
+        docker push australia-southeast1-docker.pkg.dev/${{ secrets.GCLOUD_PROJECT_ID }}/cloud_run_test/node-hello-world:latest
 
     - name: Deploy to Cloud Run
       run: |
         gcloud run deploy node-hello-world \
-          --image gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/node-hello-world:latest \
+          --image australia-southeast1.pkg.dev/${{ secrets.GCLOUD_PROJECT_ID }}/cloud_run_test/node-hello-world:latest \
           --platform managed \
           --region ${{ secrets.GCLOUD_REGION }} \
           --allow-unauthenticated
-
