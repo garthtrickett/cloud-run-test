@@ -30,7 +30,7 @@ jobs:
     - name: Build Docker image
       run: |
         docker build -t australia-southeast1-docker.pkg.dev/${{ secrets.GCLOUD_PROJECT_ID }}/cloud-run-test/node-hello-world:latest .
-        docker push australia-southeast1-docker.pkg.dev/${{ secrets.GCLOUD_PROJECT_ID }}/cloud_run-test/node-hello-world:latest
+        docker push australia-southeast1-docker.pkg.dev/${{ secrets.GCLOUD_PROJECT_ID }}/cloud-run-test/node-hello-world:latest
 
     - name: Deploy to Cloud Run
       run: |
