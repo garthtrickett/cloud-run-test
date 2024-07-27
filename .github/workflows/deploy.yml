@@ -1,0 +1,37 @@
+name: Deploy to Google Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.GCLOUD_PROJECT_ID }}
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+    - name: Authenticate Docker
+      run: gcloud auth configure-docker
+
+    - name: Build Docker image
+      run: |
+        docker build -t gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/node-hello-world:latest .
+        docker push gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/node-hello-world:latest
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy node-hello-world \
+          --image gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/node-hello-world:latest \
+          --platform managed \
+          --region ${{ secrets.GCLOUD_REGION }} \
+          --allow-unauthenticated
+
